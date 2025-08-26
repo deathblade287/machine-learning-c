@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -89,17 +90,41 @@ matrix *matMul(matrix *mat1, matrix *mat2) {
 int main(void) {
   matrix *mat = randMatrixGen(10, 2);
   printMatrix(mat);
-
-  printf("\nX Mean: %i\n", arrMean(mat->data[0]));
-  printf("\nY Mean: %i\n", arrMean(mat->data[1]));
+  printf("\n");
 
   matrix *T = transpose(mat);
-  printf("\nTransposed:\n");
-  printMatrix(T);
+  array *x = T->data[0];
+  array *y = T->data[1];
 
-  matrix *product = matMul(mat, T);
-  printf("\nProduct:\n");
-  printMatrix(product);
+  int x_avg = arrMean(x);
+  int y_avg = arrMean(y);
+
+  int grad_num = 0;
+  for (int i = 0; i < mat->rows; i++) {
+    grad_num += (x->data[i] - x_avg) * (y->data[i] - y_avg);
+  }
+
+  double grad_den = 0;
+  for (int i = 0; i < mat->rows; i++) {
+    grad_den += pow((double)x->data[i] - x_avg, (double)2);
+  }
+
+  double grad = (double)grad_num / grad_den;
+  double c = y_avg - grad * x_avg;
+
+  printf("Eq. : y = mx + c => y = %fx + %f\n", grad, c);
+
+  // TESTING
+  // printf("\nX Mean: %i\n", arrMean(mat->data[0]));
+  // printf("\nY Mean: %i\n", arrMean(mat->data[1]));
+
+  // matrix *T = transpose(mat);
+  // printf("\nTransposed:\n");
+  // printMatrix(T);
+
+  // matrix *product = matMul(mat, T);
+  // printf("\nProduct:\n");
+  // printMatrix(product);
 
   return 0;
 }
