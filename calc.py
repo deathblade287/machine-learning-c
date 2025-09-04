@@ -13,6 +13,9 @@ class expression:
     def __sub__(self, e2):
         return expression(self, e2, '-')
 
+    def __mul__(self, e2):
+        return expression(self, e2, '')
+
 
 class variable:
     def __init__(self, symbol: str, power: int = 1):
@@ -26,7 +29,7 @@ class variable:
         return f"{str(self.symbol)}**{self.power}"
 
     def __mul__(self, s):
-        return expression(self, s, "*")
+        return expression(self, s, '*')
 
     def __pow__(self, p: int):
         return variable(self.symbol, p)
@@ -37,11 +40,39 @@ class variable:
     def __sub__(self, v2):
         return expression(self, v2, '-')
 
+def extractTerms(y, terms=None):
+    if terms is None:
+        terms = []
+    if type(y) is variable:
+        terms.append(y)
+    else:
+        extractTerms(y.term1, terms)
+        extractTerms(y.term2, terms)
+
+    return terms
+
+def differentiate(y: expression):
+    terms = extractTerms(y)
+    
+    # power rule
+    for i in range(len(terms)):
+        term = terms[i]
+        if term.power == 1:
+            terms[i] = 1
+        else:
+            terms[i] = expression(term.power, variable(term.symbol, term.power - 1), '*')
+
+    return terms
+
+
 x = variable("x")
 y = variable("y")
 
 y = x**2 + x
-z = y + 5
-print(z.term1)
-print(z.term2)
-print(z.operator)
+z = x**3 - y
+
+print(differentiate(z))
+# z = y + 5
+# print(z.term1)
+# print(z.term2)
+# print(z.operator)
