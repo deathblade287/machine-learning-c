@@ -89,12 +89,13 @@ matrix *matMul(matrix *mat1, matrix *mat2) {
 
 int main(void) {
   matrix *mat = randMatrixGen(10, 2);
-  printMatrix(mat);
-  printf("\n");
 
   matrix *T = transpose(mat);
   array *x = T->data[0];
   array *y = T->data[1];
+
+  printMatrix(T);
+  printf("\n");
 
   int x_avg = arrMean(x);
   int y_avg = arrMean(y);
